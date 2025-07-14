@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TradeScape | Simplify Your Trading</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: #0d1117;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
+      position: relative;
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+    }
+    nav::-webkit-scrollbar {
+      display: none; /* Chrome Safari */
+    }
+
+    nav a {
+      flex-shrink: 0;
+      white-space: nowrap;
+      color: #58a6ff;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      font-weight: 500;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      transition: background-color 0.3s, color 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      background-color: #21262d;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    #themeToggle {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background-color: #0d0f11;
+      color: #f0f0f0;
+    }
+
+    body.dark-mode nav a {
+      color: #8ab4f8;
+    }
+
+    body.dark-mode nav a:hover {
+      background-color: #0e1013;
+      color: #fff;
+    }
+
+    body.dark-mode .modal-content {
+      background-color: #1f2937;
+      color: #ddd;
+    }
+
+    body.dark-mode .close {
+      color: #f87171;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      position: relative;
+      text-align: left;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: #d33;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #a00;
+    }
+
+    /* MOBILE STYLES */
+    @media (max-width: 768px) {
+      header {
+        justify-content: flex-start;
+        padding: 1rem 1rem 0.5rem 1rem;
+      }
+      #themeToggle {
+        position: static;
+        margin-left: 10px;
+        top: auto;
+        right: auto;
+      }
+
+      /* Hide bottom nav scrollbars for cleaner look */
+      nav.bottom-nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Bottom nav container style */
+      nav.bottom-nav {
+        background-color: #000;
+        padding: 10px 0;
+        justify-content: center;
+        gap: 10px;
+      }
+      nav.bottom-nav a {
+        color: #fff !important;
+        font-weight: 700;
+      }
+      nav.bottom-nav a:hover {
+        background-color: #333 !important;
+        color: #fff !important;
+        transform: scale(1.05);
+      }
+
+      /* Top nav on mobile: only first 3 links */
+      nav.top-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        padding-bottom: 10px;
+      }
+      nav.top-nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide bottom nav on desktop */
+      nav.bottom-nav {
+        display: flex;
+      }
+    }
+
+    /* Desktop: show all navs in header, hide bottom nav */
+    @media (min-width: 769px) {
+      header {
+        justify-content: center;
+        flex-wrap: nowrap;
+      }
+      #themeToggle {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        margin-left: 0;
+      }
+      nav.top-nav {
+        display: flex !important;
+      }
+      nav.bottom-nav {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav class="top-nav">
+      <a onclick="showPopup('intraday')">Intraday stocks</a>
+      <a onclick="showPopup('swing')">Swing stocks</a>
+      <a onclick="showPopup('delivery')">Delivery perc</a>
+      <a onclick="showPopup('indexoi')">Index OI</a>
+      <a onclick="showPopup('foi')">FOI</a>
+      <a onclick="showPopup('oca')">OCA</a>
+      <a href="learning.html" target="_blank" rel="noopener">Learning</a>
+    </nav>
+    <button id="themeToggle">🌙</button>
+  </header>
+
+  <main>
+    <div class="tradingview-widget-container">
+      <div id="tradingview_0d63e"></div>
+    </div>
+  </main>
+
+  <!-- Bottom nav only visible on mobile -->
+  <nav class="bottom-nav">
+    <a onclick="showPopup('swing')">Swing stocks</a>
+    <a onclick="showPopup('foi')">FOI</a>
+    <a onclick="showPopup('oca')">OCA</a>
+    <a href="learning.html" target="_blank" rel="noopener">Learning</a>
+  </nav>
+
+  <footer>© 2025 TradeScape. All rights reserved.</footer>
+
+  <!-- Modal -->
+  <div id="popupModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <div id="popupText"></div>
+    </div>
+  </div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    const popupData = {
+      intraday: `<h2>📈 Intraday Stocks</h2><p>Buy and sell within the same trading day.</p><ul><li>Track high volume and volatility</li><li>Use support/resistance zones</li><li>Time entries based on live buzzers</li></ul>`,
+      swing: `<h2>🔁 Swing Stocks</h2><p>Hold for a few days to catch short-term trends.</p><ul><li>Use indicators like RSI, MACD</li><li>Look for breakout setups</li></ul>`,
+      delivery: `<h2>📦 Delivery Percentage</h2><p>How much stock was actually delivered vs traded.</p>`,
+      indexoi: `<h2>📊 Index OI</h2><p>Open interest changes in Nifty, BankNifty etc.</p>`,
+      foi: `<h2>🧠 Futures OI Analytics</h2><p>See how futures positions are being built or exited.</p>`,
+      oca: `<h2>📉 Option Chain Analytics</h2><p>Analyze strike price action and volume buildups.</p>`
+    };
+
+    function showPopup(type) {
+      document.getElementById('popupText').innerHTML = popupData[type] || '<p>No info.</p>';
+      document.getElementById('popupModal').style.display = 'block';
+    }
+
+    function closePopup() {
+      document.getElementById('popupModal').style.display = 'none';
+    }
+
+    function getCurrentTheme() {
+      return document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+    }
+
+    function loadWidget(theme) {
+      document.getElementById('tradingview_0d63e').innerHTML = "";
+      new TradingView.widget({
+        "width": "100%",
+        "height": 600,
+        "symbol": "NASDAQ:AAPL",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": theme,
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "hideideas": true,
+        "withdateranges": true,
+        "hide_side_toolbar": false,
+        "details": true,
+        "hotlist": false,
+        "calendar": false,
+        "drawings_access": {
+          "type": "black",
+          "tools": [
+            { "name": "Regression Trend" },
+            { "name": "Trend Line" },
+            { "name": "Fib Retracement" }
+          ]
+        },
+        "container_id": "tradingview_0d63e"
+      });
+    }
+
+    loadWidget(getCurrentTheme());
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      loadWidget(getCurrentTheme());
+    });
+
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('popupModal')) {
+        closePopup();
+      }
+    };
+  </script>
+</body>
+</html>
